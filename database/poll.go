@@ -239,10 +239,8 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 				// From First to last Choice
 				picks := make([]string, 0)
 				options := orderOptions(vote.Options)
-				for opt, i := range options {
-					if options[opt] == i+1 {
-						picks = append(picks, opt)
-					}
+				for opt, _ := range options {
+					picks = append(picks, opt)
 				}
 				fmt.Println(options)
 				// Go over picks until we find a non-eliminated candidate
@@ -319,6 +317,7 @@ func orderOptions(options map[string]int) map[string]int {
 				result[option] = index
 			}
 		}
+		i += 1
 	}
 	return result
 }
