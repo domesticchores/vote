@@ -18,7 +18,7 @@ import (
 )
 
 func inc(x int) string {
-    return strconv.Itoa(x+1)
+	return strconv.Itoa(x + 1)
 }
 
 func main() {
@@ -330,6 +330,8 @@ func main() {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
+		
+		canModify := containsString(claims.UserInfo.Groups, "active_rtp") || containsString(claims.UserInfo.Groups, "eboard") || poll.CreatedBy == claims.UserInfo.Username
 
 		c.HTML(200, "result.tmpl", gin.H{
 			"Id":               poll.Id,
@@ -339,7 +341,7 @@ func main() {
 			"Results":          results,
 			"IsOpen":           poll.Open,
 			"IsHidden":         poll.Hidden,
-			"IsOwner":          poll.CreatedBy == claims.UserInfo.Username,
+			"CanModify":        canModify,
 			"Username":         claims.UserInfo.Username,
 			"FullName":         claims.UserInfo.FullName,
 		})
@@ -409,8 +411,11 @@ func main() {
 		}
 
 		if poll.CreatedBy != claims.UserInfo.Username {
-			c.JSON(403, gin.H{"error": "Only the creator can close a poll"})
-			return
+			if containsString(claims.UserInfo.Groups, "active-rtp") || containsString(claims.UserInfo.Groups, "eboard") {
+			} else {
+				c.JSON(403, gin.H{"error": "You cannot close this poll."})
+				return
+			}
 		}
 
 		err = poll.Close(c)
@@ -430,23 +435,23 @@ func main() {
 }
 
 func canVote(groups []string) bool {
-	var active, fall_coop, spring_coop bool
+	var active, fallCoop, springCoop bool
 	for _, group := range groups {
 		if group == "active" {
 			active = true
 		}
 		if group == "fall_coop" {
-			fall_coop = true
+			fallCoop = true
 		}
 		if group == "spring_coop" {
-			spring_coop = true
+			springCoop = true
 		}
 	}
 
 	if time.Now().Month() > time.July {
-		return active && !fall_coop
+		return active && !fallCoop
 	} else {
-		return active && !spring_coop
+		return active && !springCoop
 	}
 }
 
