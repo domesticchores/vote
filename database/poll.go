@@ -2,8 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -242,7 +240,6 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 				options := orderOptions(vote.Options)
 				for i := 0; i < len(options); i++ {
 					picks = append(picks, options[i])
-					fmt.Println(options[i] + ":" + strconv.Itoa(i))
 				}
 
 				// Go over picks until we find a non-eliminated candidate
