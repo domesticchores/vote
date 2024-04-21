@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -167,15 +168,6 @@ func GetClosedVotedPolls(ctx context.Context, userId string) ([]*Poll, error) {
 	return polls, nil
 }
 
-func containsValue(slice []string, value string) bool {
-	for _, item := range slice {
-		if item == value {
-			return true
-		}
-	}
-	return false
-}
-
 func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -183,8 +175,9 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 	pollId, _ := primitive.ObjectIDFromHex(poll.Id)
 
 	finalResult := make([]map[string]int, 0)
+	switch poll.VoteType {
 
-	if poll.VoteType == POLL_TYPE_SIMPLE {
+	case POLL_TYPE_SIMPLE:
 		pollResult := make(map[string]int)
 		cursor, err := Client.Database(db).Collection("votes").Aggregate(ctx, mongo.Pipeline{
 			{{
@@ -218,7 +211,8 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 		}
 		finalResult = append(finalResult, pollResult)
 		return finalResult, nil
-	} else if poll.VoteType == POLL_TYPE_RANKED {
+
+	case POLL_TYPE_RANKED:
 		// We want to store those that were eliminated
 		eliminated := make([]string, 0)
 
@@ -244,13 +238,13 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 				// Map a voter's ranked choice to an array
 				// From First to last Choice
 				picks := make([]string, 0)
-				for i, _ := range poll.Options {
-					for _, opt := range poll.Options {
-						if vote.Options[opt] == i+1 {
-							picks = append(picks, opt)
-						}
+				options := orderOptions(vote.Options)
+				for opt, i := range options {
+					if options[opt] == i+1 {
+						picks = append(picks, opt)
 					}
 				}
+				fmt.Println(options)
 				// Go over picks until we find a non-eliminated candidate
 				for _, candidate := range picks {
 					if !containsValue(eliminated, candidate) {
@@ -305,4 +299,26 @@ func containsKey(arr map[string]int, val string) bool {
 		}
 	}
 	return false
+}
+
+func containsValue(slice []string, value string) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
+}
+
+func orderOptions(options map[string]int) map[string]int {
+	result := make(map[string]int)
+	i := 1
+	for i < len(options) {
+		for option, index := range options {
+			if index == i {
+				result[option] = index
+			}
+		}
+	}
+	return result
 }
