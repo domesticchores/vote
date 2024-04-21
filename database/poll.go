@@ -240,7 +240,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 				// From First to last Choice
 				picks := make([]string, 0)
 				options := orderOptions(vote.Options)
-				for i := 0; i <= len(options); i++ {
+				for i := 0; i < len(options); i++ {
 					picks = append(picks, options[i])
 					fmt.Println(options[i] + ":" + strconv.Itoa(i))
 				}
