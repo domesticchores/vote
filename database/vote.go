@@ -7,8 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func HasVoted(pollId, userId string) (bool, error) {
-	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+func HasVoted(ctx context.Context, pollId, userId string) (bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	pId, err := primitive.ObjectIDFromHex(pollId)
@@ -20,6 +20,5 @@ func HasVoted(pollId, userId string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
 	return count > 0, nil
 }
