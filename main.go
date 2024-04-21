@@ -321,7 +321,7 @@ func main() {
 		}
 
 		if poll.Hidden && poll.CreatedBy != claims.UserInfo.Username {
-			c.JSON(403, gin.H{"error": "Result Hidden"})
+			c.JSON(403, gin.H{"Success": "Result Hidden"})
 			return
 		}
 
