@@ -311,7 +311,7 @@ func containsValue(slice []string, value string) bool {
 func orderOptions(options map[string]int) map[string]int {
 	result := make(map[string]int)
 	i := 1
-	for i < len(options) {
+	for i <= len(options) {
 		for option, index := range options {
 			if index == i {
 				result[option] = index
