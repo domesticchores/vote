@@ -240,9 +240,9 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 				// From First to last Choice
 				picks := make([]string, 0)
 				options := orderOptions(vote.Options)
-				for opt, i := range options {
-					picks = append(picks, opt)
-					fmt.Println(opt + ":" + strconv.Itoa(i))
+				for i := 0; i <= len(options); i++ {
+					picks = append(picks, options[i])
+					fmt.Println(options[i] + ":" + strconv.Itoa(i))
 				}
 
 				// Go over picks until we find a non-eliminated candidate
@@ -310,13 +310,13 @@ func containsValue(slice []string, value string) bool {
 	return false
 }
 
-func orderOptions(options map[string]int) map[string]int {
-	result := make(map[string]int)
+func orderOptions(options map[string]int) []string {
+	result := make([]string, 0, len(options))
 	i := 1
 	for i <= len(options) {
 		for option, index := range options {
 			if index == i {
-				result[option] = index
+				result = append(result, option)
 			}
 		}
 		i += 1
