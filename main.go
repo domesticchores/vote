@@ -192,6 +192,9 @@ func main() {
 		if poll.AllowWriteIns {
 			writeInAdj = 1
 		}
+
+		canModify := containsString(claims.UserInfo.Groups, "active_rtp") || containsString(claims.UserInfo.Groups, "eboard") || poll.CreatedBy == claims.UserInfo.Username
+
 		c.HTML(200, "poll.tmpl", gin.H{
 			"Id":               poll.Id,
 			"ShortDescription": poll.ShortDescription,
@@ -200,6 +203,7 @@ func main() {
 			"PollType":         poll.VoteType,
 			"RankedMax":        fmt.Sprint(len(poll.Options) + writeInAdj),
 			"AllowWriteIns":    poll.AllowWriteIns,
+			"CanModify":        canModify,
 			"Username":         claims.UserInfo.Username,
 			"FullName":         claims.UserInfo.FullName,
 		})
