@@ -101,7 +101,7 @@
         <br />
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
-      {{ if and (.CanModify) (.IsOpen) }}
+      {{ if .CanModify }}
         <br />
         <br />
         <form action="/poll/{{ .Id }}/close" method="POST">
