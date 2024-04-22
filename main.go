@@ -372,6 +372,18 @@ func main() {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
+		pId, _ := primitive.ObjectIDFromHex(poll.Id)
+		action := database.Action{
+			PollId: pId,
+			Date:   primitive.NewDateTimeFromTime(time.Now()),
+			User:   claims.UserInfo.Username,
+			Action: "Hide Results",
+		}
+		err = database.WriteAction(c, &action)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
 
 		c.Redirect(302, "/results/"+poll.Id)
 	}))
@@ -393,6 +405,18 @@ func main() {
 		}
 
 		err = poll.Reveal(c)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		pId, _ := primitive.ObjectIDFromHex(poll.Id)
+		action := database.Action{
+			PollId: pId,
+			Date:   primitive.NewDateTimeFromTime(time.Now()),
+			User:   claims.UserInfo.Username,
+			Action: "Reveal Results",
+		}
+		err = database.WriteAction(c, &action)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
@@ -423,6 +447,18 @@ func main() {
 		}
 
 		err = poll.Close(c)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		pId, _ := primitive.ObjectIDFromHex(poll.Id)
+		action := database.Action{
+			PollId: pId,
+			Date:   primitive.NewDateTimeFromTime(time.Now()),
+			User:   claims.UserInfo.Username,
+			Action: "Close Poll",
+		}
+		err = database.WriteAction(c, &action)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
