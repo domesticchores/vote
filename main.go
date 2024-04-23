@@ -429,7 +429,7 @@ func main() {
 		cl, _ := c.Get("cshauth")
 		claims := cl.(csh_auth.CSHClaims)
 		// This is intentionally left unprotected
-		// A user should be able to close their own polls, regardless of if they can vote
+		// A user should be able to end their own polls, regardless of if they can vote
 
 		poll, err := database.GetPoll(c, c.Param("id"))
 
@@ -441,7 +441,7 @@ func main() {
 		if poll.CreatedBy != claims.UserInfo.Username {
 			if containsString(claims.UserInfo.Groups, "active-rtp") || containsString(claims.UserInfo.Groups, "eboard") {
 			} else {
-				c.JSON(403, gin.H{"error": "You cannot close this poll."})
+				c.JSON(403, gin.H{"error": "You cannot end this poll."})
 				return
 			}
 		}
@@ -456,7 +456,7 @@ func main() {
 			PollId: pId,
 			Date:   primitive.NewDateTimeFromTime(time.Now()),
 			User:   claims.UserInfo.Username,
-			Action: "Close Poll",
+			Action: "Close/End Poll",
 		}
 		err = database.WriteAction(c, &action)
 		if err != nil {
