@@ -374,6 +374,7 @@ func main() {
 		}
 		pId, _ := primitive.ObjectIDFromHex(poll.Id)
 		action := database.Action{
+			Id:     "",
 			PollId: pId,
 			Date:   primitive.NewDateTimeFromTime(time.Now()),
 			User:   claims.UserInfo.Username,
@@ -411,6 +412,7 @@ func main() {
 		}
 		pId, _ := primitive.ObjectIDFromHex(poll.Id)
 		action := database.Action{
+			Id:     "",
 			PollId: pId,
 			Date:   primitive.NewDateTimeFromTime(time.Now()),
 			User:   claims.UserInfo.Username,
@@ -453,6 +455,7 @@ func main() {
 		}
 		pId, _ := primitive.ObjectIDFromHex(poll.Id)
 		action := database.Action{
+			Id:     "",
 			PollId: pId,
 			Date:   primitive.NewDateTimeFromTime(time.Now()),
 			User:   claims.UserInfo.Username,
