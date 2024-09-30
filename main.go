@@ -489,6 +489,9 @@ func canVote(groups []string) bool {
 		if group == "spring_coop" {
 			springCoop = true
 		}
+		if group == "10weeks" {
+			return false
+		}
 	}
 
 	if time.Now().Month() > time.July {
