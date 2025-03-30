@@ -7,6 +7,7 @@ import (
 	"github.com/computersciencehouse/vote/database"
 	"github.com/computersciencehouse/vote/sse"
 	"github.com/gin-gonic/gin"
+	"github.com/mvdan/xurls/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"html/template"
 	"net/http"
@@ -19,6 +20,13 @@ import (
 
 func inc(x int) string {
 	return strconv.Itoa(x + 1)
+}
+
+
+func MakeLinks(s string) string {
+  rx := xurls.Relaxed()
+  safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
+  return safe
 }
 
 func main() {

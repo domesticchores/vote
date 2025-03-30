@@ -28,7 +28,7 @@
     <div class="container main p-5">
       <h2>{{ .ShortDescription }}</h2>
       {{ if .LongDescription }}
-      <h4>{{ .LongDescription }}</h4>
+      <h4>{{ .LongDescription | MakeLinks }}</h4>
       {{ end }}
       {{ if eq .PollType "ranked" }}
       <p>This is a Ranked Choice vote. Rank the candidates in order of your preference. 1 is most preferred, and {{ .RankedMax }} is least perferred. You may leave an option blank
