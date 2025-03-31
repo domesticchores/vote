@@ -23,10 +23,10 @@ func inc(x int) string {
 }
 
 
-func MakeLinks(s string) string {
+func MakeLinks(s string) template.HTML {
   rx := xurls.Relaxed()
   safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
-  return safe
+  return template.HTML(safe)
 }
 
 func main() {
