@@ -7,7 +7,7 @@ import (
 	"github.com/computersciencehouse/vote/database"
 	"github.com/computersciencehouse/vote/sse"
 	"github.com/gin-gonic/gin"
-	"github.com/mvdan/xurls/v2"
+	"mvdan.cc/xurls/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"html/template"
 	"net/http"

@@ -7,6 +7,7 @@ COPY main.go .
 COPY database database
 COPY logging logging
 COPY sse sse
+RUN go get mvdan.cc/xurls/v2
 RUN go build -v -o vote
 
 FROM docker.io/alpine:3.16
