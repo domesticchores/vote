@@ -34,6 +34,7 @@ func main() {
 	r.StaticFS("/static", http.Dir("static"))
 	r.SetFuncMap(template.FuncMap{
 		"inc": inc,
+		"MakeLinks": MakeLinks,
 	})
 	r.LoadHTMLGlob("templates/*")
 	broker := sse.NewBroker()
