@@ -24,7 +24,7 @@ func inc(x int) string {
 
 func MakeLinks(s string) template.HTML {
 	rx := xurls.Strict()
-	template.HTMLEscapeString(s)
+	s = template.HTMLEscapeString(s)
 	safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
 	return template.HTML(safe)
 }
