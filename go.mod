@@ -1,12 +1,15 @@
 module github.com/computersciencehouse/vote
 
-go 1.18
+go 1.22.0
+
+toolchain go1.24.1
 
 require (
 	github.com/computersciencehouse/csh-auth v0.0.0-20220727220706-74c02fd79f06
 	github.com/gin-gonic/gin v1.8.1
 	github.com/sirupsen/logrus v1.9.0
 	go.mongodb.org/mongo-driver v1.9.0
+	mvdan.cc/xurls/v2 v2.6.0
 )
 
 require (
@@ -37,8 +40,8 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220726230323-06994584191e // indirect
 	golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c // indirect
-	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
-	golang.org/x/sys v0.0.0-20220727055044-e65921a090b8 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect

@@ -1,4 +1,4 @@
-FROM docker.io/golang:1.18.4-alpine3.16 AS build
+FROM docker.io/golang:1.22-alpine AS build
 
 WORKDIR /src/
 RUN apk add git
@@ -7,7 +7,6 @@ COPY main.go .
 COPY database database
 COPY logging logging
 COPY sse sse
-RUN go get mvdan.cc/xurls/v2
 RUN go build -v -o vote
 
 FROM docker.io/alpine:3.16
