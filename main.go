@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"html/template"
+	"mvdan.cc/xurls/v2"
 	"net/http"
 	"os"
 	"sort"
@@ -21,11 +22,19 @@ func inc(x int) string {
 	return strconv.Itoa(x + 1)
 }
 
+func MakeLinks(s string) template.HTML {
+	rx := xurls.Strict()
+	s = template.HTMLEscapeString(s)
+	safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
+	return template.HTML(safe)
+}
+
 func main() {
 	r := gin.Default()
 	r.StaticFS("/static", http.Dir("static"))
 	r.SetFuncMap(template.FuncMap{
-		"inc": inc,
+		"inc":       inc,
+		"MakeLinks": MakeLinks,
 	})
 	r.LoadHTMLGlob("templates/*")
 	broker := sse.NewBroker()
