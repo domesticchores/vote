@@ -7,9 +7,9 @@ import (
 	"github.com/computersciencehouse/vote/database"
 	"github.com/computersciencehouse/vote/sse"
 	"github.com/gin-gonic/gin"
-	"mvdan.cc/xurls/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"html/template"
+	"mvdan.cc/xurls/v2"
 	"net/http"
 	"os"
 	"sort"
@@ -22,11 +22,10 @@ func inc(x int) string {
 	return strconv.Itoa(x + 1)
 }
 
-
-func MakeLinks(s string) template.HTML {
-  rx := xurls.Relaxed()
-  safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
-  return template.HTML(safe)
+func MakeLinks(s string) string {
+	rx := xurls.Strict()
+	safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
+	return safe
 }
 
 func main() {
@@ -34,7 +33,6 @@ func main() {
 	r.StaticFS("/static", http.Dir("static"))
 	r.SetFuncMap(template.FuncMap{
 		"inc": inc,
-		"MakeLinks": MakeLinks,
 	})
 	r.LoadHTMLGlob("templates/*")
 	broker := sse.NewBroker()
@@ -207,7 +205,7 @@ func main() {
 		c.HTML(200, "poll.tmpl", gin.H{
 			"Id":               poll.Id,
 			"ShortDescription": poll.ShortDescription,
-			"LongDescription":  poll.LongDescription,
+			"LongDescription":  MakeLinks(poll.LongDescription),
 			"Options":          poll.Options,
 			"PollType":         poll.VoteType,
 			"RankedMax":        fmt.Sprint(len(poll.Options) + writeInAdj),
@@ -349,7 +347,7 @@ func main() {
 		c.HTML(200, "result.tmpl", gin.H{
 			"Id":               poll.Id,
 			"ShortDescription": poll.ShortDescription,
-			"LongDescription":  poll.LongDescription,
+			"LongDescription":  MakeLinks(poll.LongDescription),
 			"VoteType":         poll.VoteType,
 			"Results":          results,
 			"IsOpen":           poll.Open,
