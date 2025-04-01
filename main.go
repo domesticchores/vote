@@ -22,17 +22,19 @@ func inc(x int) string {
 	return strconv.Itoa(x + 1)
 }
 
-func MakeLinks(s string) string {
+func MakeLinks(s string) template.HTML {
 	rx := xurls.Strict()
+	template.HTMLEscapeString(s)
 	safe := rx.ReplaceAllString(s, `<a href="$0" target="_blank">$0</a>`)
-	return safe
+	return template.HTML(safe)
 }
 
 func main() {
 	r := gin.Default()
 	r.StaticFS("/static", http.Dir("static"))
 	r.SetFuncMap(template.FuncMap{
-		"inc": inc,
+		"inc":       inc,
+		"MakeLinks": MakeLinks,
 	})
 	r.LoadHTMLGlob("templates/*")
 	broker := sse.NewBroker()
@@ -205,7 +207,7 @@ func main() {
 		c.HTML(200, "poll.tmpl", gin.H{
 			"Id":               poll.Id,
 			"ShortDescription": poll.ShortDescription,
-			"LongDescription":  MakeLinks(poll.LongDescription),
+			"LongDescription":  poll.LongDescription,
 			"Options":          poll.Options,
 			"PollType":         poll.VoteType,
 			"RankedMax":        fmt.Sprint(len(poll.Options) + writeInAdj),
@@ -347,7 +349,7 @@ func main() {
 		c.HTML(200, "result.tmpl", gin.H{
 			"Id":               poll.Id,
 			"ShortDescription": poll.ShortDescription,
-			"LongDescription":  MakeLinks(poll.LongDescription),
+			"LongDescription":  poll.LongDescription,
 			"VoteType":         poll.VoteType,
 			"Results":          results,
 			"IsOpen":           poll.Open,
