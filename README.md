@@ -24,6 +24,6 @@ VOTE_STATE=
 - [x] Write-in votes
 - [x] Ranked choice voting
 - [x] Show options that got no votes
-- [ ] Allow results to be hidden until a vote is closed
+- [x] Allow results to be hidden until a vote is closed
 - [ ] Don't let the user fuck it up
 - [ ] Show eboard polls with a higher priority
