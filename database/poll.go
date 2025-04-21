@@ -235,11 +235,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 		//change ranked votes from a map (which is unordered) to a slice of votes (which is ordered)
 		//order is from first preference to last preference
 		for _, vote := range votesRaw {
-			//picks := make([]string, 0)
 			options := orderOptions(vote.Options)
-			//for i := 0; i < len(options); i++ {
-			//	picks = append(picks, options[i])
-			//}
 			votes = append(votes, options)
 		}
 
@@ -262,7 +258,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					}
 				}
 			}
-			fmt.Println("we out the loop 1")
+			fmt.Println(voteCount)
 			// Eliminate lowest vote getter
 			minVote := 1000000             //the smallest number of votes received thus far (to find who is in last)
 			minPerson := make([]string, 0) //the person(s) with the least votes that need removed
@@ -275,7 +271,6 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					minPerson = append(minPerson, person)
 				}
 			}
-			fmt.Println("we out the loop 2")
 			eliminated = append(eliminated, minPerson...)
 			finalResult = append(finalResult, tallied)
 			// If one person has all the votes, they win
