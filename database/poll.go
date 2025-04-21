@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -239,8 +240,8 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 			for i := 0; i < len(options); i++ {
 				picks = append(picks, options[i])
 			}
-			println(picks)
-			println(options)
+			fmt.Println(picks)
+			fmt.Println(options)
 			votes = append(votes, picks)
 		}
 
