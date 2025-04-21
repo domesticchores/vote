@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -248,7 +249,6 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 			tallied := make(map[string]int)
 			voteCount := 0
 			for _, picks := range votes {
-
 				// Go over picks until we find a non-eliminated candidate
 				for _, candidate := range picks {
 					if !containsValue(eliminated, candidate) {
@@ -262,6 +262,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					}
 				}
 			}
+			fmt.Println("we out the loop 1")
 			// Eliminate lowest vote getter
 			minVote := 1000000             //the smallest number of votes received thus far (to find who is in last)
 			minPerson := make([]string, 0) //the person(s) with the least votes that need removed
@@ -274,6 +275,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					minPerson = append(minPerson, person)
 				}
 			}
+			fmt.Println("we out the loop 2")
 			eliminated = append(eliminated, minPerson...)
 			finalResult = append(finalResult, tallied)
 			// If one person has all the votes, they win
