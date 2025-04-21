@@ -282,10 +282,11 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 			for _, val := range tallied {
 				if val != minVote {
 					allSame = false
+					break
 				}
 				// if any particular entry is above half remaining votes, they win and it ends
-				fmt.Println("ct:", voteCount, " val:", val)
 				if val > (voteCount / 2) {
+					allSame = true
 					break
 				}
 			}
