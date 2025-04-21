@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -280,9 +279,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 			end := true
 			for _, val := range tallied {
 				// if any particular entry is above half remaining votes, they win and it ends
-				fmt.Println(val > (voteCount/2), " ", voteCount, " ", val)
 				if val > (voteCount / 2) {
-					fmt.Println("here! ct:", voteCount/2, " val:", val)
 					end = true
 					break
 				}
@@ -313,7 +310,6 @@ func containsValue(slice []string, value string) bool {
 
 func orderOptions(options map[string]int) []string {
 	result := make([]string, 0, len(options))
-	fmt.Println(options)
 	order := 1
 	for order <= len(options) {
 		for option, preference := range options {
@@ -323,6 +319,5 @@ func orderOptions(options map[string]int) []string {
 			}
 		}
 	}
-	fmt.Println(result)
 	return result
 }
