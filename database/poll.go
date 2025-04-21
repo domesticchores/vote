@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -235,14 +234,12 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 		//change ranked votes from a map (which is unordered) to a slice of votes (which is ordered)
 		//order is from first preference to last preference
 		for _, vote := range votesRaw {
-			picks := make([]string, 0)
+			//picks := make([]string, 0)
 			options := orderOptions(vote.Options)
-			for i := 0; i < len(options); i++ {
-				picks = append(picks, options[i])
-			}
-			fmt.Println(picks)
-			fmt.Println(options)
-			votes = append(votes, picks)
+			//for i := 0; i < len(options); i++ {
+			//	picks = append(picks, options[i])
+			//}
+			votes = append(votes, options)
 		}
 
 		// Iterate until we have a winner
