@@ -278,19 +278,20 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 			}
 			// Check if all values in tallied are the same
 			// In that case, it's a tie?
-			allSame := true
+			end := true
 			for _, val := range tallied {
 				if val != minVote {
-					allSame = false
+					end = false
 					break
 				}
 				// if any particular entry is above half remaining votes, they win and it ends
 				if val > (voteCount / 2) {
-					allSame = true
+					fmt.Println("here! ct:", voteCount/2, " val:", val)
+					end = true
 					break
 				}
 			}
-			if allSame {
+			if end {
 				break
 			}
 		}
