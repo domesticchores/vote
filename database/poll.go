@@ -285,6 +285,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					break
 				}
 				// if any particular entry is above half remaining votes, they win and it ends
+				fmt.Println(val > (voteCount/2), " ", voteCount, " ", val)
 				if val > (voteCount / 2) {
 					fmt.Println("here! ct:", voteCount/2, " val:", val)
 					end = true
