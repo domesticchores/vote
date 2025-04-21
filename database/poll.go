@@ -258,7 +258,6 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					}
 				}
 			}
-			fmt.Println(voteCount)
 			// Eliminate lowest vote getter
 			minVote := 1000000             //the smallest number of votes received thus far (to find who is in last)
 			minPerson := make([]string, 0) //the person(s) with the least votes that need removed
@@ -285,6 +284,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 					allSame = false
 				}
 				// if any particular entry is above half remaining votes, they win and it ends
+				fmt.Println("ct:", voteCount, " val:", val)
 				if val > (voteCount / 2) {
 					break
 				}
