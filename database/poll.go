@@ -314,14 +314,16 @@ func containsValue(slice []string, value string) bool {
 
 func orderOptions(options map[string]int) []string {
 	result := make([]string, 0, len(options))
-	i := 1
-	for i <= len(options) {
-		for option, index := range options {
-			if index == i {
+	fmt.Println(options)
+	order := 1
+	for order <= len(options) {
+		for option, preference := range options {
+			if preference == order {
 				result = append(result, option)
-				i += 1
+				order += 1
 			}
 		}
 	}
+	fmt.Println(result)
 	return result
 }
