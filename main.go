@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	csh_auth "github.com/computersciencehouse/csh-auth"
+	cshAuth "github.com/computersciencehouse/csh-auth"
 	"github.com/computersciencehouse/vote/database"
 	"github.com/computersciencehouse/vote/sse"
 	"github.com/gin-gonic/gin"
@@ -39,7 +39,7 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 	broker := sse.NewBroker()
 
-	csh := csh_auth.CSHAuth{}
+	csh := cshAuth.CSHAuth{}
 	csh.Init(
 		os.Getenv("VOTE_OIDC_ID"),
 		os.Getenv("VOTE_OIDC_SECRET"),
@@ -57,7 +57,7 @@ func main() {
 
 	r.GET("/", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		// This is intentionally left unprotected
 		// A user may be unable to vote but should still be able to see a list of polls
 
@@ -97,7 +97,7 @@ func main() {
 
 	r.GET("/create", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		if !canVote(claims.UserInfo.Groups) {
 			c.HTML(403, "unauthorized.tmpl", gin.H{
 				"Username": claims.UserInfo.Username,
@@ -114,7 +114,7 @@ func main() {
 
 	r.POST("/create", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		if !canVote(claims.UserInfo.Groups) {
 			c.HTML(403, "unauthorized.tmpl", gin.H{
 				"Username": claims.UserInfo.Username,
@@ -166,7 +166,7 @@ func main() {
 
 	r.GET("/poll/:id", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		// This is intentionally left unprotected
 		// We will check if a user can vote and redirect them to results if not later
 
@@ -219,7 +219,7 @@ func main() {
 	}))
 	r.POST("/poll/:id", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		if !canVote(claims.UserInfo.Groups) {
 			c.HTML(403, "unauthorized.tmpl", gin.H{
 				"Username": claims.UserInfo.Username,
@@ -323,7 +323,7 @@ func main() {
 
 	r.GET("/results/:id", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		// This is intentionally left unprotected
 		// A user may be unable to vote but still interested in the results of a poll
 
@@ -362,7 +362,7 @@ func main() {
 
 	r.POST("/poll/:id/hide", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 
 		poll, err := database.GetPoll(c, c.Param("id"))
 
@@ -400,7 +400,7 @@ func main() {
 
 	r.POST("/poll/:id/reveal", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 
 		poll, err := database.GetPoll(c, c.Param("id"))
 
@@ -438,7 +438,7 @@ func main() {
 
 	r.POST("/poll/:id/close", csh.AuthWrapper(func(c *gin.Context) {
 		cl, _ := c.Get("cshauth")
-		claims := cl.(csh_auth.CSHClaims)
+		claims := cl.(cshAuth.CSHClaims)
 		// This is intentionally left unprotected
 		// A user should be able to end their own polls, regardless of if they can vote
 

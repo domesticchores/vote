@@ -226,22 +226,24 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 		if err != nil {
 			return nil, err
 		}
-		var votes []RankedVote
-		cursor.All(ctx, &votes)
+		var votesRaw []RankedVote
+		cursor.All(ctx, &votesRaw)
+
+		votes := make([][]string, 0)
+
+		//change ranked votes from a map (which is unordered) to a slice of votes (which is ordered)
+		//order is from first preference to last preference
+		for _, vote := range votesRaw {
+			options := orderOptions(vote.Options)
+			votes = append(votes, options)
+		}
 
 		// Iterate until we have a winner
 		for {
-			// Contains candidates to number of votes in this route
+			// Contains candidates to number of votes in this round
 			tallied := make(map[string]int)
-			for _, vote := range votes {
-				// Map a voter's ranked choice to an array
-				// From First to last Choice
-				picks := make([]string, 0)
-				options := orderOptions(vote.Options)
-				for i := 0; i < len(options); i++ {
-					picks = append(picks, options[i])
-				}
-
+			voteCount := 0
+			for _, picks := range votes {
 				// Go over picks until we find a non-eliminated candidate
 				for _, candidate := range picks {
 					if !containsValue(eliminated, candidate) {
@@ -250,52 +252,52 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 						} else {
 							tallied[candidate] = 1
 						}
+						voteCount += 1
 						break
 					}
 				}
 			}
 			// Eliminate lowest vote getter
-			min_vote := 1000000
-			min_person := make([]string, 0)
+			minVote := 1000000             //the smallest number of votes received thus far (to find who is in last)
+			minPerson := make([]string, 0) //the person(s) with the least votes that need removed
 			for person, vote := range tallied {
-				if vote < min_vote {
-					min_vote = vote
-					min_person = make([]string, 0)
-					min_person = append(min_person, person)
-				} else if vote == min_vote {
-					min_person = append(min_person, person)
+				if vote < minVote { // this should always be true round one, to set a true "who is in last"
+					minVote = vote
+					minPerson = make([]string, 0)
+					minPerson = append(minPerson, person)
+				} else if vote == minVote {
+					minPerson = append(minPerson, person)
 				}
 			}
-			eliminated = append(eliminated, min_person...)
+			eliminated = append(eliminated, minPerson...)
 			finalResult = append(finalResult, tallied)
 			// If one person has all the votes, they win
 			if len(tallied) == 1 {
 				break
 			}
-			// Check if all values in tallied are the same
-			// In that case, it's a tie?
-			allSame := true
-			for _, val := range tallied {
-				if val != min_vote {
-					allSame = false
+
+			end := true
+			for str, val := range tallied {
+				// if any particular entry is above half remaining votes, they win and it ends
+				if val > (voteCount / 2) {
+					finalResult = append(finalResult, map[string]int{str: val})
+					end = true
+					break
+				}
+				// Check if all values in tallied are the same
+				// In that case, it's a tie?
+				if val != minVote {
+					end = false
+					break
 				}
 			}
-			if allSame {
+			if end {
 				break
 			}
 		}
 		return finalResult, nil
 	}
 	return nil, nil
-}
-
-func containsKey(arr map[string]int, val string) bool {
-	for key, _ := range arr {
-		if key == val {
-			return true
-		}
-	}
-	return false
 }
 
 func containsValue(slice []string, value string) bool {
@@ -309,14 +311,14 @@ func containsValue(slice []string, value string) bool {
 
 func orderOptions(options map[string]int) []string {
 	result := make([]string, 0, len(options))
-	i := 1
-	for i <= len(options) {
-		for option, index := range options {
-			if index == i {
+	order := 1
+	for order <= len(options) {
+		for option, preference := range options {
+			if preference == order {
 				result = append(result, option)
+				order += 1
 			}
 		}
-		i += 1
 	}
 	return result
 }
