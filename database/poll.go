@@ -319,7 +319,7 @@ func orderOptions(options map[string]int, ctx context.Context) []string {
 		for option, preference := range options {
 			select {
 			case <-ctx.Done():
-				return result
+				return make([]string, 0)
 			default:
 				if preference == order {
 					result = append(result, option)
