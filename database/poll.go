@@ -214,6 +214,7 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 	case POLL_TYPE_RANKED:
 		// We want to store those that were eliminated
 		eliminated := make([]string, 0)
+		eliminated = append(eliminated, "Isaac Ingram", "Charlotte George")
 
 		// Get all votes
 		cursor, err := Client.Database(db).Collection("votes").Aggregate(ctx, mongo.Pipeline{
@@ -234,8 +235,10 @@ func (poll *Poll) GetResult(ctx context.Context) ([]map[string]int, error) {
 		//change ranked votes from a map (which is unordered) to a slice of votes (which is ordered)
 		//order is from first preference to last preference
 		for _, vote := range votesRaw {
-			options := orderOptions(vote.Options)
-			votes = append(votes, options)
+			temp, cf := context.WithTimeout(context.Background(), 1*time.Second)
+			optionList := orderOptions(vote.Options, temp)
+			cf()
+			votes = append(votes, optionList)
 		}
 
 		// Iterate until we have a winner
@@ -309,14 +312,19 @@ func containsValue(slice []string, value string) bool {
 	return false
 }
 
-func orderOptions(options map[string]int) []string {
+func orderOptions(options map[string]int, ctx context.Context) []string {
 	result := make([]string, 0, len(options))
 	order := 1
 	for order <= len(options) {
 		for option, preference := range options {
-			if preference == order {
-				result = append(result, option)
-				order += 1
+			select {
+			case <-ctx.Done():
+				return make([]string, 0)
+			default:
+				if preference == order {
+					result = append(result, option)
+					order += 1
+				}
 			}
 		}
 	}
